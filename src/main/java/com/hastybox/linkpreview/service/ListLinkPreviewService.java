@@ -75,7 +75,7 @@ public class ListLinkPreviewService implements LinkPreviewService {
 		// URL pattern. Only http and https protocol
 		// TODO better pattern
 		urlPattern = Pattern
-				.compile("^(?:https?://)?[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
+				.compile("^(?:https?://)?[a-zA-Z0-9][-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
 
 	}
 
