@@ -25,9 +25,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,20 +55,34 @@ public class GenericLinkAnalyzer implements LinkAnalyzer {
 	private Pattern urlPattern;
 	
 	/**
+	 * {@link HtmlHandler} to process the loaded HTML source code
+	 */
+	private HtmlHandler htmlHandler;
+	
+	/**
 	 * @param urlPattern
 	 *            the urlPattern to set
 	 */
 	public void setUrlPattern(String urlPattern) {
 		this.urlPattern = Pattern.compile(urlPattern);
 	}
+	
+	/**
+	 * @param htmlHandler the htmlHandler to set
+	 */
+	public void setHtmlHandler(HtmlHandler htmlHandler) {
+		this.htmlHandler = htmlHandler;
+	}
 
 	/**
-	 * 
+	 * default constructor with default configuration
 	 */
 	public GenericLinkAnalyzer() {
 		// TODO better pattern
 		urlPattern = Pattern
 				.compile("^(?:https?://)?[a-zA-Z0-9][-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
+		
+		htmlHandler = new JsoupHtmlHandler();
 	}
 
 	/*
@@ -132,18 +143,8 @@ public class GenericLinkAnalyzer implements LinkAnalyzer {
 			throw new LinkAnalyzerException(e);
 		}
 		
-		Document document;
-		
-		try {
-			document = Jsoup.parse(content, encoding, url);
-		} catch (IOException e) {
-			throw new LinkAnalyzerException(e);
-		}
-		
-		Elements title = document.getElementsByTag("title");
-		
-
-		return null;
+		// TODO Proper baseUrl
+		return htmlHandler.process(content, encoding, url);
 	}
 	
 	public static void main(String[] args) throws Exception {
