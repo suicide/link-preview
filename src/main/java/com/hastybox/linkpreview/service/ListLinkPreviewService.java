@@ -120,7 +120,6 @@ public class ListLinkPreviewService implements LinkPreviewService {
 			throw new LinkPreviewException(String.format("Could not resolve ShortUrl from %s", url), e);
 		}
 
-		// TODO pre-handle Short URLs
 		for (LinkAnalyzer analyzer : analyzers) {
 			// check if analyzrer can provess the URL
 			if (analyzer.canProcess(contentUrl)) {
