@@ -31,9 +31,10 @@ import org.slf4j.LoggerFactory;
 import com.hastybox.linkpreview.analyzer.LinkAnalyzer;
 import com.hastybox.linkpreview.common.LinkAnalyzerException;
 import com.hastybox.linkpreview.model.LinkPreview;
+import com.hastybox.linkpreview.model.linktype.CommonLinkPreviewType;
 
 /**
- * This class if thread safe.
+ * This class is thread safe.
  * 
  * @author Patrick Sy (psy@get-it.us)
  * 
@@ -60,6 +61,11 @@ public class GenericLinkAnalyzer implements LinkAnalyzer {
 	private HtmlHandler htmlHandler;
 	
 	/**
+	 * {@link HttpClient} to use to grab HTML from websites
+	 */
+	private HttpClient httpClient;
+	
+	/**
 	 * @param urlPattern
 	 *            the urlPattern to set
 	 */
@@ -73,6 +79,13 @@ public class GenericLinkAnalyzer implements LinkAnalyzer {
 	public void setHtmlHandler(HtmlHandler htmlHandler) {
 		this.htmlHandler = htmlHandler;
 	}
+	
+	/**
+	 * @param httpClient the httpClient to set
+	 */
+	public void setHttpClient(HttpClient httpClient) {
+		this.httpClient = httpClient;
+	}
 
 	/**
 	 * default constructor with default configuration
@@ -81,6 +94,8 @@ public class GenericLinkAnalyzer implements LinkAnalyzer {
 		// TODO better pattern
 		urlPattern = Pattern
 				.compile("^(?:https?://)?[a-zA-Z0-9][-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
+		
+		httpClient = new DefaultHttpClient();
 		
 		htmlHandler = new JsoupHtmlHandler();
 	}
@@ -107,23 +122,21 @@ public class GenericLinkAnalyzer implements LinkAnalyzer {
 	 */
 	public LinkPreview process(String url) throws LinkAnalyzerException {
 
-		// TODO thread safe, configurable
-		HttpClient client = new DefaultHttpClient();
+		LOGGER.debug("Processing URL {}", url);
+		
 		HttpGet get = new HttpGet(url);
 		HttpResponse response;
 		try {
 
-			response = client.execute(get);
+			response = httpClient.execute(get);
 			
 		} catch (ClientProtocolException e) {
-			// TODO
-			throw new LinkAnalyzerException(e);
+			throw new LinkAnalyzerException("A HTTP protocol error occured", e);
 		} catch (IOException e) {
-			// TODO
-			throw new LinkAnalyzerException(e);
+			throw new LinkAnalyzerException("A connection problem occured", e);
 		}
 		// TODO handle Status codes
-		// TODO handle content types
+		// TODO handle content types, only html and images are allowed
 		Header encodingHeader = response.getEntity().getContentEncoding();
 		
 		String encoding = null;
@@ -144,7 +157,12 @@ public class GenericLinkAnalyzer implements LinkAnalyzer {
 		}
 		
 		// TODO Proper baseUrl
-		return htmlHandler.process(content, encoding, url);
+		LinkPreview preview = htmlHandler.process(content, encoding, url);
+		
+		preview.setType(CommonLinkPreviewType.GENERIC);
+		// TODO set host
+		
+		return preview;
 	}
 	
 	public static void main(String[] args) throws Exception {

@@ -14,6 +14,8 @@
  */
 package com.hastybox.linkpreview.model.factory;
 
+import java.util.Date;
+
 import com.hastybox.linkpreview.model.LinkPreview;
 import com.hastybox.linkpreview.model.SimpleLinkPreview;
 
@@ -29,8 +31,11 @@ public class SimpleLinkPreviewFactory implements LinkPreviewFactory {
 	 * @see com.hastybox.linkpreview.model.factory.LinkPreviewFactory#create()
 	 */
 	public LinkPreview create() {
-		// create a new instance. Thats it.
-		return new SimpleLinkPreview();
+		// create a new instance.
+		SimpleLinkPreview preview = new SimpleLinkPreview();
+		preview.setCreatedAt(new Date());
+		
+		return preview;
 	}
 
 }

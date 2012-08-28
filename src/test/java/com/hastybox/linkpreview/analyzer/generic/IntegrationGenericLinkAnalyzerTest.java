@@ -14,17 +14,41 @@
  */
 package com.hastybox.linkpreview.analyzer.generic;
 
-import java.io.InputStream;
+import static org.junit.Assert.*;
 
-import com.hastybox.linkpreview.common.LinkAnalyzerException;
+import org.junit.Before;
+import org.junit.Test;
+
 import com.hastybox.linkpreview.model.LinkPreview;
 
 /**
  * @author Patrick Sy (psy@get-it.us)
  *
  */
-public interface HtmlHandler {
-
-	LinkPreview process(InputStream htmlDataStream, String encoding, String url) throws LinkAnalyzerException;
+public class IntegrationGenericLinkAnalyzerTest {
 	
+	/**
+	 * test object
+	 */
+	private GenericLinkAnalyzer analyzer;
+
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@Before
+	public void setUp() throws Exception {
+		analyzer = new GenericLinkAnalyzer();
+		
+	}
+
+	/**
+	 * Test method for {@link com.hastybox.linkpreview.analyzer.generic.GenericLinkAnalyzer#process(java.lang.String)}.
+	 */
+	@Test
+	public void testProcess() throws Exception {
+		LinkPreview preview = analyzer.process("http://bit.ly/NpZhFf");
+		
+		System.out.println(preview);
+	}
+
 }

@@ -14,17 +14,32 @@
  */
 package com.hastybox.linkpreview.analyzer.generic;
 
-import java.io.InputStream;
+import java.util.List;
 
+import com.hastybox.linkpreview.analyzer.ShortUrlResolver;
 import com.hastybox.linkpreview.common.LinkAnalyzerException;
-import com.hastybox.linkpreview.model.LinkPreview;
 
 /**
+ * Wraps a given {@link ShortUrlResolver}. It matches the given URL with a given
+ * {@link List} of hostnames of short URL provides. Only if a match is found the
+ * wrapped {@link ShortUrlResolver} instance is used to resolve the short URL.
+ * 
  * @author Patrick Sy (psy@get-it.us)
- *
+ * 
  */
-public interface HtmlHandler {
+public class HostnameMappedShortUrlResolverWrapper implements ShortUrlResolver {
 
-	LinkPreview process(InputStream htmlDataStream, String encoding, String url) throws LinkAnalyzerException;
-	
+	private ShortUrlResolver shortUrlResolver;
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.hastybox.linkpreview.analyzer.ShortUrlTracer#trace(java.lang.String)
+	 */
+	public String trace(String url) throws LinkAnalyzerException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

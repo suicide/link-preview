@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hastybox.linkpreview.analyzer.LinkAnalyzer;
+import com.hastybox.linkpreview.analyzer.ShortUrlResolver;
 import com.hastybox.linkpreview.common.LinkAnalyzerException;
 import com.hastybox.linkpreview.common.LinkPreviewException;
 import com.hastybox.linkpreview.model.LinkPreview;
@@ -57,6 +58,11 @@ public class ListLinkPreviewService implements LinkPreviewService {
 	private Pattern urlPattern;
 
 	/**
+	 * resolves ShortUrls
+	 */
+	private ShortUrlResolver shortUrlResolver;
+
+	/**
 	 * The {@link List} of {@link LinkAnalyzer}s to use for processing. The
 	 * analyzers are probed from first to last until one is found that can
 	 * process the given URL.
@@ -66,6 +72,17 @@ public class ListLinkPreviewService implements LinkPreviewService {
 	 */
 	public void setAnalyzers(List<LinkAnalyzer> analyzers) {
 		this.analyzers = analyzers;
+	}
+
+	/**
+	 * tries to resolve given short URLs to the actual or final URLs in order to
+	 * use a more proper {@link LinkAnalyzer} to process the content.
+	 * 
+	 * @param shortUrlResolver
+	 *            the shortUrlResolver to set
+	 */
+	public void setShortUrlResolver(ShortUrlResolver shortUrlResolver) {
+		this.shortUrlResolver = shortUrlResolver;
 	}
 
 	/**
@@ -95,19 +112,26 @@ public class ListLinkPreviewService implements LinkPreviewService {
 		}
 
 		LinkPreview preview = null;
+		String contentUrl;
+		
+		try {
+			contentUrl = shortUrlResolver.trace(url);
+		} catch (LinkAnalyzerException e) {
+			throw new LinkPreviewException(String.format("Could not resolve ShortUrl from %s", url), e);
+		}
 
 		// TODO pre-handle Short URLs
 		for (LinkAnalyzer analyzer : analyzers) {
 			// check if analyzrer can provess the URL
-			if (analyzer.canProcess(url)) {
-				LOGGER.debug("Anazyzing URL {} using Analyzer {}", url,
+			if (analyzer.canProcess(contentUrl)) {
+				LOGGER.debug("Anazyzing URL {} using Analyzer {}", contentUrl,
 						analyzer);
 
 				try {
-					preview = analyzer.process(url);
+					preview = analyzer.process(contentUrl);
 				} catch (LinkAnalyzerException e) {
 					throw new LinkPreviewException(String.format(
-							"%s could not be processed", url), e);
+							"%s could not be processed", contentUrl), e);
 				}
 			}
 		}

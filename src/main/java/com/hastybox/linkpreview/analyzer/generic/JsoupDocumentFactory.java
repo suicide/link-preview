@@ -14,17 +14,33 @@
  */
 package com.hastybox.linkpreview.analyzer.generic;
 
+import java.io.IOException;
 import java.io.InputStream;
 
-import com.hastybox.linkpreview.common.LinkAnalyzerException;
-import com.hastybox.linkpreview.model.LinkPreview;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 /**
+ * Class to wrap fugly static call to Jsoup
+ * 
  * @author Patrick Sy (psy@get-it.us)
  *
  */
-public interface HtmlHandler {
-
-	LinkPreview process(InputStream htmlDataStream, String encoding, String url) throws LinkAnalyzerException;
+public class JsoupDocumentFactory {
 	
+	/**
+	 * parses HTML InputStream. It hides the static call to Jsoup.
+	 * 
+	 * @param htmlDataStream
+	 * @param encoding
+	 * @param url
+	 * @return
+	 * @throws IOException
+	 */
+	public Document retrieveDocument(InputStream htmlDataStream, String encoding,
+			String url) throws IOException {
+		
+		return Jsoup.parse(htmlDataStream, encoding, url);
+	}
+
 }

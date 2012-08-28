@@ -14,17 +14,28 @@
  */
 package com.hastybox.linkpreview.analyzer.generic;
 
-import java.io.InputStream;
-
+import com.hastybox.linkpreview.analyzer.ShortUrlResolver;
 import com.hastybox.linkpreview.common.LinkAnalyzerException;
-import com.hastybox.linkpreview.model.LinkPreview;
 
 /**
+ * Simple generic implementation of {@link ShortUrlResolver}. It follows up on any
+ * given URL and tries to resolve the final URL after redirects. If there was no
+ * redirect the given URL is returned.
+ * 
  * @author Patrick Sy (psy@get-it.us)
- *
+ * 
  */
-public interface HtmlHandler {
+public class GenericShortUrlResolver implements ShortUrlResolver {
 
-	LinkPreview process(InputStream htmlDataStream, String encoding, String url) throws LinkAnalyzerException;
-	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.hastybox.linkpreview.analyzer.ShortUrlTracer#trace(java.lang.String)
+	 */
+	public String trace(String url) throws LinkAnalyzerException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

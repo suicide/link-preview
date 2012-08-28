@@ -12,19 +12,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hastybox.linkpreview.analyzer.generic;
-
-import java.io.InputStream;
+package com.hastybox.linkpreview.analyzer;
 
 import com.hastybox.linkpreview.common.LinkAnalyzerException;
-import com.hastybox.linkpreview.model.LinkPreview;
 
 /**
+ * Follows redirects of short URLs like bit.ly and resolves the actually linked URL
+ * 
  * @author Patrick Sy (psy@get-it.us)
  *
  */
-public interface HtmlHandler {
-
-	LinkPreview process(InputStream htmlDataStream, String encoding, String url) throws LinkAnalyzerException;
+public interface ShortUrlResolver {
 	
+	/**
+	 * traces the given short {@code url} and follows its redirects to the actually linked content
+	 * @param url the url to follow
+	 * @return the resolved URL or the given {@code url} if the given url was no short url
+	 * @throws LinkAnalyzerException if something went wrong
+	 */
+	String trace(String url) throws LinkAnalyzerException;
+
 }
